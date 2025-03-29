@@ -4,7 +4,7 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import mimetypes
-from conversion import process_file
+from conversion import process_file, remux_video
 
 app = FastAPI()
 
@@ -33,17 +33,25 @@ async def process_file_endpoint(
     with open(input_path, "wb") as f:
         f.write(await file.read())
 
-    # Process the file
-    output_path = os.path.join(OUTPUT_DIR, f"processed_{file.filename}")
+    # Determine output paths
+    ext = os.path.splitext(file.filename)[-1].lower()
+    processed_path = os.path.join(OUTPUT_DIR, f"processed_{file.filename}")
+    final_path = processed_path
+
+    # Process file (image or video)
     process_file(
         input_path,
-        output_path,
+        processed_path,
         lower_threshold,
         upper_threshold,
         is_black_background,
     )
 
-    # Detect correct MIME type (e.g., video/mp4 or image/png)
-    media_type, _ = mimetypes.guess_type(output_path)
+    # If video, remux for browser playback
+    if ext in [".mp4", ".avi", ".mov"]:
+        final_path = os.path.join(OUTPUT_DIR, f"remuxed_{file.filename}")
+        remux_video(processed_path, final_path)
 
-    return FileResponse(output_path, media_type=media_type, filename=f"processed_{file.filename}")
+    # Detect MIME type
+    media_type, _ = mimetypes.guess_type(final_path)
+    return FileResponse(final_path, media_type=media_type, filename=os.path.basename(final_path))
