@@ -3,17 +3,7 @@ import cv2
 import os
 import subprocess
 
-def remux_video(input_path, output_path):
-    """
-    Use ffmpeg to fix MP4 metadata for browser compatibility
-    """
-    subprocess.run([
-        "ffmpeg",
-        "-i", input_path,
-        "-movflags", "faststart",  # moves moov atom to beginning
-        "-c", "copy",              # no re-encoding
-        output_path
-    ], check=True)
+
     
 def process_file(input_path, output_path, lower_threshold, upper_threshold, is_black_background):
     """
@@ -60,7 +50,7 @@ def process_video(input_path, output_path, lower_threshold, upper_threshold, is_
     import cv2
 
     # Settings
-    scale_percent = 50      # Resize to 50% of original size
+    scale_percent = 70      # Resize to 50% of original size
     frame_skip = 2          # Process every 2nd frame (reduce FPS by half)
 
     cap = cv2.VideoCapture(input_path)
