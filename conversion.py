@@ -3,9 +3,9 @@ import cv2
 import os
 import subprocess
 
-def remux_video(input_path, output_path):
+def remux_video(input_path, output_path, original_path):
     """
-    Use ffmpeg to fix MP4 metadata for browser compatibility
+    Combines processed video (no audio) with original audio.
     """
     subprocess.run([
         "ffmpeg",
@@ -19,6 +19,7 @@ def remux_video(input_path, output_path):
         "-movflags", "faststart",  # web-optimized
         output_path
     ], check=True)
+
     
 def process_file(input_path, output_path, lower_threshold, upper_threshold, is_black_background, high_quality=False):
     """
