@@ -66,7 +66,7 @@ def process_video(input_path, output_path, lower_threshold, upper_threshold, is_
     import cv2
 
     # Settings
-    scale_percent = 50      # Resize to 50% of original size
+    scale_percent = 100 if high_quality else 50      # Resize to 50% of original size
     frame_skip = 1 if high_quality else 2         # Process every 2nd frame (reduce FPS by half)
 
     cap = cv2.VideoCapture(input_path)
