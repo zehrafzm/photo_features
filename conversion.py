@@ -39,7 +39,7 @@ def process_file(input_path, output_path, lower_threshold, upper_threshold, is_b
         process_image(input_path, output_path, lower_threshold, upper_threshold, is_black_background)
     elif ext in [".mp4", ".avi", ".mov"]:
         # Process video
-        process_video(input_path, output_path, lower_threshold, upper_threshold, is_black_background)
+        process_video(input_path, output_path, lower_threshold, upper_threshold, is_black_background, high_quality)
     else:
         raise ValueError(f"Unsupported file type: {ext}")
 
