@@ -3,9 +3,24 @@ import cv2
 import os
 import subprocess
 
-
+def remux_video(input_path, output_path):
+    """
+    Use ffmpeg to fix MP4 metadata for browser compatibility
+    """
+    subprocess.run([
+        "ffmpeg",
+        "-i", input_path,          # processed video
+        "-i", original_path,       # original with audio
+        "-c:v", "copy",            # copy video
+        "-c:a", "aac",             # re-encode audio if necessary
+        "-map", "0:v:0",           # take video from processed
+        "-map", "1:a:0",           # take audio from original
+        "-shortest",               # cut to shortest stream
+        "-movflags", "faststart",  # web-optimized
+        output_path
+    ], check=True)
     
-def process_file(input_path, output_path, lower_threshold, upper_threshold, is_black_background):
+def process_file(input_path, output_path, lower_threshold, upper_threshold, is_black_background, high_quality=False):
     """
     Processes an image or video file using Canny edge detection.
     Parameters:
@@ -46,12 +61,12 @@ def process_image(input_path, output_path, lower_threshold, upper_threshold, is_
     # Save the output image
     cv2.imwrite(output_path, output)
 
-def process_video(input_path, output_path, lower_threshold, upper_threshold, is_black_background):
+def process_video(input_path, output_path, lower_threshold, upper_threshold, is_black_background, high_quality=False):
     import cv2
 
     # Settings
-    scale_percent = 70      # Resize to 50% of original size
-    frame_skip = 2          # Process every 2nd frame (reduce FPS by half)
+    scale_percent = 50      # Resize to 50% of original size
+    frame_skip = 1 if high_quality else 2         # Process every 2nd frame (reduce FPS by half)
 
     cap = cv2.VideoCapture(input_path)
     fps = cap.get(cv2.CAP_PROP_FPS) / frame_skip  # Adjust output FPS
